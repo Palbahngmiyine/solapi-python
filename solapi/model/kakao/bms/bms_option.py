@@ -38,14 +38,9 @@ BMS_REQUIRED_FIELDS: dict[BmsChatBubbleType, list[str]] = {
 WIDE_ITEM_LIST_MIN_SUB_ITEMS = 3
 
 
-def _to_camel(s: str) -> str:
-    components = s.split("_")
-    return components[0] + "".join(x.title() for x in components[1:])
-
-
-class Bms(BaseModel):
-    targeting: Optional[Literal["I", "M", "N"]] = None
-    chat_bubble_type: Optional[BmsChatBubbleType] = None
+class BmsOption(BaseModel):
+    targeting: Literal["I", "M", "N"]
+    chat_bubble_type: BmsChatBubbleType
 
     adult: Optional[bool] = None
     header: Optional[str] = None
@@ -62,18 +57,11 @@ class Bms(BaseModel):
     commerce: Optional[BmsCommerce] = None
     video: Optional[BmsVideo] = None
 
-    model_config = ConfigDict(
-        alias_generator=to_camel,
-        populate_by_name=True,
-        extra="ignore",
-    )
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
 
     @model_validator(mode="after")
-    def validate_required_fields(self) -> "Bms":
+    def validate_required_fields(self) -> "BmsOption":
         chat_bubble_type = self.chat_bubble_type
-        if chat_bubble_type is None:
-            return self
-
         required_fields = BMS_REQUIRED_FIELDS.get(chat_bubble_type, [])
         missing_fields = [
             field for field in required_fields if getattr(self, field, None) is None
@@ -99,3 +87,8 @@ class Bms(BaseModel):
                 )
 
         return self
+
+
+def _to_camel(s: str) -> str:
+    components = s.split("_")
+    return components[0] + "".join(x.title() for x in components[1:])
