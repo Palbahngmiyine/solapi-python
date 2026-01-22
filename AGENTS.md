@@ -65,6 +65,12 @@ model/
 - Import sorting: isort (I rule)
 - Target: Python 3.9+
 
+### Tidy First Principles
+- Never mix refactoring and feature changes in the same commit
+- Tidy related code before making behavioral changes
+- Tidying: guard clauses, dead code removal, rename, extract conditionals
+- Separate tidying commits from feature commits
+
 ## ANTI-PATTERNS (THIS PROJECT)
 
 ### NEVER

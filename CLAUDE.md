@@ -82,6 +82,26 @@ When releasing, update version in BOTH locations:
 - **Classes**: `PascalCase`
 - **Request/Response suffixes**: `*Request`, `*Response`
 
+## Tidy First Principles
+
+Follow Kent Beck's "Tidy First?" principles:
+
+### Separate Changes
+- Never mix **structural changes** (refactoring) with **behavioral changes** (features/fixes) in the same commit
+- Order: tidying commit → feature commit
+
+### Tidy First
+Tidy the relevant code area before making behavioral changes:
+- Use guard clauses to reduce nesting
+- Remove dead code
+- Rename for clarity
+- Extract complex conditionals
+
+### Small Steps
+- Keep tidying changes small and safe
+- One tidying per commit
+- Maintain passing tests
+
 ## Key Locations
 
 | Task | Location |
