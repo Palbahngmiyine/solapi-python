@@ -10,37 +10,14 @@ from solapi.model.kakao.bms.bms_carousel import (
 )
 from solapi.model.kakao.bms.bms_commerce import BmsCommerce
 from solapi.model.kakao.bms.bms_coupon import BmsCoupon
+from solapi.model.kakao.bms.bms_option import (
+    BMS_REQUIRED_FIELDS,
+    WIDE_ITEM_LIST_MIN_SUB_ITEMS,
+    BmsChatBubbleType,
+    _to_camel,
+)
 from solapi.model.kakao.bms.bms_video import BmsVideo
 from solapi.model.kakao.bms.bms_wide_item import BmsMainWideItem, BmsSubWideItem
-
-BmsChatBubbleType = Literal[
-    "TEXT",
-    "IMAGE",
-    "WIDE",
-    "WIDE_ITEM_LIST",
-    "COMMERCE",
-    "CAROUSEL_FEED",
-    "CAROUSEL_COMMERCE",
-    "PREMIUM_VIDEO",
-]
-
-BMS_REQUIRED_FIELDS: dict[BmsChatBubbleType, list[str]] = {
-    "TEXT": [],
-    "IMAGE": ["image_id"],
-    "WIDE": ["image_id"],
-    "WIDE_ITEM_LIST": ["header", "main_wide_item", "sub_wide_item_list"],
-    "COMMERCE": ["image_id", "commerce", "buttons"],
-    "CAROUSEL_FEED": ["carousel"],
-    "CAROUSEL_COMMERCE": ["carousel"],
-    "PREMIUM_VIDEO": ["video"],
-}
-
-WIDE_ITEM_LIST_MIN_SUB_ITEMS = 3
-
-
-def _to_camel(s: str) -> str:
-    components = s.split("_")
-    return components[0] + "".join(x.title() for x in components[1:])
 
 
 class Bms(BaseModel):

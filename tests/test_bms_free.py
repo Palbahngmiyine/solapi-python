@@ -331,16 +331,16 @@ class TestBmsFreeE2E:
 
         try:
             response = message_service.send(message)
-
-            assert isinstance(response, SendMessageResponse)
-            assert response.group_info is not None
-            assert response.group_info.count.total > 0
-
-            print(f"Group ID: {response.group_info.group_id}")
-            print(f"Total: {response.group_info.count.total}")
-            print(f"Success: {response.group_info.count.registered_success}")
         except Exception as e:
             pytest.skip(f"BMS FREE TEXT test skipped: {e}")
+
+        assert isinstance(response, SendMessageResponse)
+        assert response.group_info is not None
+        assert response.group_info.count.total > 0
+
+        print(f"Group ID: {response.group_info.group_id}")
+        print(f"Total: {response.group_info.count.total}")
+        print(f"Success: {response.group_info.count.registered_success}")
 
     def test_send_bms_text_with_buttons(
         self, message_service, test_phone_numbers, test_kakao_options
@@ -387,16 +387,16 @@ class TestBmsFreeE2E:
 
         try:
             response = message_service.send(message)
-
-            assert isinstance(response, SendMessageResponse)
-            assert response.group_info is not None
-            assert response.group_info.count.total > 0
-
-            print(f"Group ID: {response.group_info.group_id}")
-            print(f"Total: {response.group_info.count.total}")
-            print(f"Success: {response.group_info.count.registered_success}")
         except Exception as e:
             pytest.skip(f"BMS FREE TEXT with buttons test skipped: {e}")
+
+        assert isinstance(response, SendMessageResponse)
+        assert response.group_info is not None
+        assert response.group_info.count.total > 0
+
+        print(f"Group ID: {response.group_info.group_id}")
+        print(f"Total: {response.group_info.count.total}")
+        print(f"Success: {response.group_info.count.registered_success}")
 
     def test_send_bms_image(
         self, message_service, test_phone_numbers, test_kakao_options
@@ -445,16 +445,16 @@ class TestBmsFreeE2E:
             )
 
             response = message_service.send(message)
-
-            assert isinstance(response, SendMessageResponse)
-            assert response.group_info is not None
-            assert response.group_info.count.total > 0
-
-            print(f"Group ID: {response.group_info.group_id}")
-            print(f"Total: {response.group_info.count.total}")
-            print(f"Success: {response.group_info.count.registered_success}")
         except Exception as e:
             pytest.skip(f"BMS FREE IMAGE test skipped: {e}")
+
+        assert isinstance(response, SendMessageResponse)
+        assert response.group_info is not None
+        assert response.group_info.count.total > 0
+
+        print(f"Group ID: {response.group_info.group_id}")
+        print(f"Total: {response.group_info.count.total}")
+        print(f"Success: {response.group_info.count.registered_success}")
 
     def test_send_bms_commerce(
         self, message_service, test_phone_numbers, test_kakao_options
@@ -513,16 +513,16 @@ class TestBmsFreeE2E:
             )
 
             response = message_service.send(message)
-
-            assert isinstance(response, SendMessageResponse)
-            assert response.group_info is not None
-            assert response.group_info.count.total > 0
-
-            print(f"Group ID: {response.group_info.group_id}")
-            print(f"Total: {response.group_info.count.total}")
-            print(f"Success: {response.group_info.count.registered_success}")
         except Exception as e:
             pytest.skip(f"BMS FREE COMMERCE test skipped: {e}")
+
+        assert isinstance(response, SendMessageResponse)
+        assert response.group_info is not None
+        assert response.group_info.count.total > 0
+
+        print(f"Group ID: {response.group_info.group_id}")
+        print(f"Total: {response.group_info.count.total}")
+        print(f"Success: {response.group_info.count.registered_success}")
 
     def test_send_bms_wide(
         self, message_service, test_phone_numbers, test_kakao_options
@@ -577,21 +577,24 @@ class TestBmsFreeE2E:
             )
 
             response = message_service.send(message)
-
-            assert isinstance(response, SendMessageResponse)
-            assert response.group_info is not None
-            assert response.group_info.count.total > 0
-
-            print(f"Group ID: {response.group_info.group_id}")
-            print(f"Total: {response.group_info.count.total}")
-            print(f"Success: {response.group_info.count.registered_success}")
         except Exception as e:
             pytest.skip(f"BMS FREE WIDE test skipped: {e}")
+
+        assert isinstance(response, SendMessageResponse)
+        assert response.group_info is not None
+        assert response.group_info.count.total > 0
+
+        print(f"Group ID: {response.group_info.group_id}")
+        print(f"Total: {response.group_info.count.total}")
+        print(f"Success: {response.group_info.count.registered_success}")
 
     def test_send_bms_wide_item_list(
         self, message_service, test_phone_numbers, test_kakao_options
     ):
-        """Test sending BMS FREE WIDE_ITEM_LIST type."""
+        """Test sending BMS FREE WIDE_ITEM_LIST type.
+
+        Note: Main item requires 2:1 ratio, sub items require 1:1 ratio.
+        """
         from pathlib import Path
 
         from solapi.model import RequestMessage
@@ -605,22 +608,27 @@ class TestBmsFreeE2E:
         if not pf_id or pf_id == "계정에 등록된 카카오 비즈니스 채널ID":
             pytest.skip("SOLAPI_KAKAO_PF_ID not configured")
 
-        image_path = (
-            Path(__file__).parent.parent / "examples" / "images" / "example.jpg"
+        main_image_path = (
+            Path(__file__).parent.parent / "examples" / "images" / "example_wide.jpg"
         )
-        if not image_path.exists():
-            pytest.skip(f"Test image not found at {image_path}")
+        sub_image_path = (
+            Path(__file__).parent.parent / "examples" / "images" / "example_square.jpg"
+        )
+        if not main_image_path.exists():
+            pytest.skip(f"2:1 ratio test image not found at {main_image_path}")
+        if not sub_image_path.exists():
+            pytest.skip(f"1:1 ratio test image not found at {sub_image_path}")
 
         try:
             main_file_response = message_service.upload_file(
-                file_path=str(image_path),
+                file_path=str(main_image_path),
                 upload_type=FileTypeEnum.BMS_WIDE_MAIN_ITEM_LIST,
             )
             main_image_id = main_file_response.file_id
             print(f"Uploaded main image ID: {main_image_id}")
 
             sub_file_response = message_service.upload_file(
-                file_path=str(image_path),
+                file_path=str(sub_image_path),
                 upload_type=FileTypeEnum.BMS_WIDE_SUB_ITEM_LIST,
             )
             sub_image_id = sub_file_response.file_id
@@ -669,16 +677,16 @@ class TestBmsFreeE2E:
             )
 
             response = message_service.send(message)
-
-            assert isinstance(response, SendMessageResponse)
-            assert response.group_info is not None
-            assert response.group_info.count.total > 0
-
-            print(f"Group ID: {response.group_info.group_id}")
-            print(f"Total: {response.group_info.count.total}")
-            print(f"Success: {response.group_info.count.registered_success}")
         except Exception as e:
             pytest.skip(f"BMS FREE WIDE_ITEM_LIST test skipped: {e}")
+
+        assert isinstance(response, SendMessageResponse)
+        assert response.group_info is not None
+        assert response.group_info.count.total > 0
+
+        print(f"Group ID: {response.group_info.group_id}")
+        print(f"Total: {response.group_info.count.total}")
+        print(f"Success: {response.group_info.count.registered_success}")
 
     def test_send_bms_carousel_feed(
         self, message_service, test_phone_numbers, test_kakao_options
@@ -751,16 +759,16 @@ class TestBmsFreeE2E:
             )
 
             response = message_service.send(message)
-
-            assert isinstance(response, SendMessageResponse)
-            assert response.group_info is not None
-            assert response.group_info.count.total > 0
-
-            print(f"Group ID: {response.group_info.group_id}")
-            print(f"Total: {response.group_info.count.total}")
-            print(f"Success: {response.group_info.count.registered_success}")
         except Exception as e:
             pytest.skip(f"BMS FREE CAROUSEL_FEED test skipped: {e}")
+
+        assert isinstance(response, SendMessageResponse)
+        assert response.group_info is not None
+        assert response.group_info.count.total > 0
+
+        print(f"Group ID: {response.group_info.group_id}")
+        print(f"Total: {response.group_info.count.total}")
+        print(f"Success: {response.group_info.count.registered_success}")
 
     def test_send_bms_carousel_commerce(
         self, message_service, test_phone_numbers, test_kakao_options
@@ -841,16 +849,16 @@ class TestBmsFreeE2E:
             )
 
             response = message_service.send(message)
-
-            assert isinstance(response, SendMessageResponse)
-            assert response.group_info is not None
-            assert response.group_info.count.total > 0
-
-            print(f"Group ID: {response.group_info.group_id}")
-            print(f"Total: {response.group_info.count.total}")
-            print(f"Success: {response.group_info.count.registered_success}")
         except Exception as e:
             pytest.skip(f"BMS FREE CAROUSEL_COMMERCE test skipped: {e}")
+
+        assert isinstance(response, SendMessageResponse)
+        assert response.group_info is not None
+        assert response.group_info.count.total > 0
+
+        print(f"Group ID: {response.group_info.group_id}")
+        print(f"Total: {response.group_info.count.total}")
+        print(f"Success: {response.group_info.count.registered_success}")
 
     def test_send_bms_premium_video(
         self, message_service, test_phone_numbers, test_kakao_options
@@ -891,13 +899,13 @@ class TestBmsFreeE2E:
             )
 
             response = message_service.send(message)
-
-            assert isinstance(response, SendMessageResponse)
-            assert response.group_info is not None
-            assert response.group_info.count.total > 0
-
-            print(f"Group ID: {response.group_info.group_id}")
-            print(f"Total: {response.group_info.count.total}")
-            print(f"Success: {response.group_info.count.registered_success}")
         except Exception as e:
             pytest.skip(f"BMS FREE PREMIUM_VIDEO test skipped: {e}")
+
+        assert isinstance(response, SendMessageResponse)
+        assert response.group_info is not None
+        assert response.group_info.count.total > 0
+
+        print(f"Group ID: {response.group_info.group_id}")
+        print(f"Total: {response.group_info.count.total}")
+        print(f"Success: {response.group_info.count.registered_success}")

@@ -1,13 +1,11 @@
-from typing import List, Optional, Union
+from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
 
-from solapi.model.kakao.bms.bms_button import BmsAppButton, BmsWebButton
+from solapi.model.kakao.bms.bms_button import BmsLinkButton
 from solapi.model.kakao.bms.bms_commerce import BmsCommerce
 from solapi.model.kakao.bms.bms_coupon import BmsCoupon
-
-BmsLinkButton = Union[BmsWebButton, BmsAppButton]
 
 
 class BmsCarouselHead(BaseModel):
@@ -36,14 +34,14 @@ class BmsCarouselFeedItem(BaseModel):
     content: Optional[str] = None
     image_id: Optional[str] = None
     image_link: Optional[str] = None
-    buttons: Optional[List[BmsLinkButton]] = None
+    buttons: Optional[list[BmsLinkButton]] = None
     coupon: Optional[BmsCoupon] = None
 
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
 
 
 class BmsCarouselFeedSchema(BaseModel):
-    items: Optional[List[BmsCarouselFeedItem]] = Field(default=None, alias="list")
+    items: Optional[list[BmsCarouselFeedItem]] = Field(default=None, alias="list")
     tail: Optional[BmsCarouselTail] = None
 
     model_config = ConfigDict(populate_by_name=True)
@@ -53,7 +51,7 @@ class BmsCarouselCommerceItem(BaseModel):
     commerce: Optional[BmsCommerce] = None
     image_id: Optional[str] = None
     image_link: Optional[str] = None
-    buttons: Optional[List[BmsLinkButton]] = None
+    buttons: Optional[list[BmsLinkButton]] = None
     additional_content: Optional[str] = None
     coupon: Optional[BmsCoupon] = None
 
@@ -62,7 +60,7 @@ class BmsCarouselCommerceItem(BaseModel):
 
 class BmsCarouselCommerceSchema(BaseModel):
     head: Optional[BmsCarouselHead] = None
-    items: Optional[List[BmsCarouselCommerceItem]] = Field(default=None, alias="list")
+    items: Optional[list[BmsCarouselCommerceItem]] = Field(default=None, alias="list")
     tail: Optional[BmsCarouselTail] = None
 
     model_config = ConfigDict(populate_by_name=True)
