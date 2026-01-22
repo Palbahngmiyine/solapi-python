@@ -53,3 +53,12 @@ class BmsCoupon(BaseModel):
                 '"OOO UP 쿠폰" (7자 이내)'
             )
         return v
+
+    @field_validator("description")
+    @classmethod
+    def validate_coupon_description(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        if len(v) > 12:
+            raise ValueError("쿠폰 설명은 최대 12자 이하로 입력해주세요.")
+        return v
