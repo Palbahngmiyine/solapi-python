@@ -11,10 +11,8 @@ from solapi.model.kakao.bms.bms_carousel import (
 from solapi.model.kakao.bms.bms_commerce import BmsCommerce
 from solapi.model.kakao.bms.bms_coupon import BmsCoupon
 from solapi.model.kakao.bms.bms_option import (
-    BMS_REQUIRED_FIELDS,
-    WIDE_ITEM_LIST_MIN_SUB_ITEMS,
     BmsChatBubbleType,
-    _to_camel,
+    validate_bms_required_fields,
 )
 from solapi.model.kakao.bms.bms_video import BmsVideo
 from solapi.model.kakao.bms.bms_wide_item import BmsMainWideItem, BmsSubWideItem
@@ -47,32 +45,9 @@ class Bms(BaseModel):
 
     @model_validator(mode="after")
     def validate_required_fields(self) -> "Bms":
-        chat_bubble_type = self.chat_bubble_type
-        if chat_bubble_type is None:
-            return self
-
-        required_fields = BMS_REQUIRED_FIELDS.get(chat_bubble_type, [])
-        missing_fields = [
-            field for field in required_fields if getattr(self, field, None) is None
-        ]
-
-        if missing_fields:
-            camel_fields = [_to_camel(f) for f in missing_fields]
-            raise ValueError(
-                f"BMS {chat_bubble_type} 타입에 필수 필드가 누락되었습니다: "
-                f"{', '.join(camel_fields)}"
-            )
-
-        if chat_bubble_type == "WIDE_ITEM_LIST":
-            sub_wide_item_list = self.sub_wide_item_list
-            if (
-                not sub_wide_item_list
-                or len(sub_wide_item_list) < WIDE_ITEM_LIST_MIN_SUB_ITEMS
-            ):
-                raise ValueError(
-                    f"WIDE_ITEM_LIST 타입의 subWideItemList는 최소 "
-                    f"{WIDE_ITEM_LIST_MIN_SUB_ITEMS}개 이상이어야 합니다. "
-                    f"현재: {len(sub_wide_item_list) if sub_wide_item_list else 0}개"
-                )
-
+        validate_bms_required_fields(
+            chat_bubble_type=self.chat_bubble_type,
+            sub_wide_item_list=self.sub_wide_item_list,
+            get_field_value=lambda field: getattr(self, field, None),
+        )
         return self

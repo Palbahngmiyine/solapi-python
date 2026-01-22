@@ -23,7 +23,11 @@ from solapi.model.kakao.bms.bms_carousel import (
 )
 from solapi.model.kakao.bms.bms_commerce import BmsCommerce
 from solapi.model.kakao.bms.bms_coupon import BmsCoupon
-from solapi.model.kakao.bms.bms_option import BmsChatBubbleType, BmsOption
+from solapi.model.kakao.bms.bms_option import (
+    BmsChatBubbleType,
+    BmsOption,
+    validate_bms_required_fields,
+)
 from solapi.model.kakao.bms.bms_video import BmsVideo
 from solapi.model.kakao.bms.bms_wide_item import BmsMainWideItem, BmsSubWideItem
 
@@ -59,4 +63,6 @@ __all__ = [
     # Option
     "BmsChatBubbleType",
     "BmsOption",
+    # Validation
+    "validate_bms_required_fields",
 ]

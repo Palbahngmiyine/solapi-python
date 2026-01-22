@@ -1,4 +1,4 @@
-from typing import Literal, Optional, Union
+from typing import Any, Callable, Literal, Optional, Union
 
 from pydantic import BaseModel, ConfigDict, model_validator
 from pydantic.alias_generators import to_camel
@@ -38,6 +38,43 @@ BMS_REQUIRED_FIELDS: dict[BmsChatBubbleType, list[str]] = {
 WIDE_ITEM_LIST_MIN_SUB_ITEMS = 3
 
 
+def _to_camel(s: str) -> str:
+    components = s.split("_")
+    return components[0] + "".join(x.title() for x in components[1:])
+
+
+def validate_bms_required_fields(
+    chat_bubble_type: Optional[BmsChatBubbleType],
+    sub_wide_item_list: Optional[list],
+    get_field_value: Callable[[str], Any],
+) -> None:
+    if chat_bubble_type is None:
+        return
+
+    required_fields = BMS_REQUIRED_FIELDS.get(chat_bubble_type, [])
+    missing_fields = [
+        field for field in required_fields if get_field_value(field) is None
+    ]
+
+    if missing_fields:
+        camel_fields = [_to_camel(f) for f in missing_fields]
+        raise ValueError(
+            f"BMS {chat_bubble_type} 타입에 필수 필드가 누락되었습니다: "
+            f"{', '.join(camel_fields)}"
+        )
+
+    if chat_bubble_type == "WIDE_ITEM_LIST":
+        if (
+            not sub_wide_item_list
+            or len(sub_wide_item_list) < WIDE_ITEM_LIST_MIN_SUB_ITEMS
+        ):
+            raise ValueError(
+                f"WIDE_ITEM_LIST 타입의 subWideItemList는 최소 "
+                f"{WIDE_ITEM_LIST_MIN_SUB_ITEMS}개 이상이어야 합니다. "
+                f"현재: {len(sub_wide_item_list) if sub_wide_item_list else 0}개"
+            )
+
+
 class BmsOption(BaseModel):
     targeting: Literal["I", "M", "N"]
     chat_bubble_type: BmsChatBubbleType
@@ -61,34 +98,9 @@ class BmsOption(BaseModel):
 
     @model_validator(mode="after")
     def validate_required_fields(self) -> "BmsOption":
-        chat_bubble_type = self.chat_bubble_type
-        required_fields = BMS_REQUIRED_FIELDS.get(chat_bubble_type, [])
-        missing_fields = [
-            field for field in required_fields if getattr(self, field, None) is None
-        ]
-
-        if missing_fields:
-            camel_fields = [_to_camel(f) for f in missing_fields]
-            raise ValueError(
-                f"BMS {chat_bubble_type} 타입에 필수 필드가 누락되었습니다: "
-                f"{', '.join(camel_fields)}"
-            )
-
-        if chat_bubble_type == "WIDE_ITEM_LIST":
-            sub_wide_item_list = self.sub_wide_item_list
-            if (
-                not sub_wide_item_list
-                or len(sub_wide_item_list) < WIDE_ITEM_LIST_MIN_SUB_ITEMS
-            ):
-                raise ValueError(
-                    f"WIDE_ITEM_LIST 타입의 subWideItemList는 최소 "
-                    f"{WIDE_ITEM_LIST_MIN_SUB_ITEMS}개 이상이어야 합니다. "
-                    f"현재: {len(sub_wide_item_list) if sub_wide_item_list else 0}개"
-                )
-
+        validate_bms_required_fields(
+            chat_bubble_type=self.chat_bubble_type,
+            sub_wide_item_list=self.sub_wide_item_list,
+            get_field_value=lambda field: getattr(self, field, None),
+        )
         return self
-
-
-def _to_camel(s: str) -> str:
-    components = s.split("_")
-    return components[0] + "".join(x.title() for x in components[1:])
