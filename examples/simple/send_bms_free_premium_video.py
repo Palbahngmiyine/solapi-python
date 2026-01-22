@@ -7,7 +7,7 @@ videoUrl은 반드시 "https://tv.kakao.com/"으로 시작해야 합니다.
 발신번호, 수신번호에 반드시 -, * 등 특수문자를 제거하여 기입하시기 바랍니다. 예) 01012345678
 """
 
-from os.path import abspath
+from pathlib import Path
 
 from solapi import SolapiMessageService
 from solapi.model import Bms, KakaoOption, RequestMessage
@@ -47,7 +47,7 @@ except Exception as e:
 
 try:
     file_response = message_service.upload_file(
-        file_path=abspath("../images/example.jpg"),
+        file_path=str(Path(__file__).parent / "../images/example_square.jpg"),
         upload_type=FileTypeEnum.KAKAO,
     )
 
@@ -78,7 +78,7 @@ try:
                 ],
                 coupon=BmsCoupon(
                     title="10% 할인 쿠폰",
-                    description="영화 예매 시 사용 가능한 할인 쿠폰입니다.",
+                    description="영화 예매 시 할인",
                     link_mobile="https://example.com/coupon",
                 ),
             ),

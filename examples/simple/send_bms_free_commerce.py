@@ -8,7 +8,7 @@ COMMERCE 타입은 buttons가 필수입니다 (최소 1개).
 발신번호, 수신번호에 반드시 -, * 등 특수문자를 제거하여 기입하시기 바랍니다. 예) 01012345678
 """
 
-from os.path import abspath
+from pathlib import Path
 
 from solapi import SolapiMessageService
 from solapi.model import Bms, KakaoOption, RequestMessage
@@ -27,7 +27,7 @@ message_service = SolapiMessageService(
 
 try:
     file_response = message_service.upload_file(
-        file_path=abspath("../images/example_wide.jpg"),
+        file_path=str(Path(__file__).parent / "../images/example_wide.jpg"),
         upload_type=FileTypeEnum.BMS,
     )
     print(f"파일 업로드 성공! File ID: {file_response.file_id}")
@@ -65,7 +65,7 @@ try:
                 ],
                 coupon=BmsCoupon(
                     title="포인트 UP 쿠폰",
-                    description="구매 시 2배 적립 쿠폰입니다.",
+                    description="구매 시 2배 적립",
                     link_mobile="https://example.com/coupon",
                 ),
             ),

@@ -6,7 +6,7 @@
 발신번호, 수신번호에 반드시 -, * 등 특수문자를 제거하여 기입하시기 바랍니다. 예) 01012345678
 """
 
-from os.path import abspath
+from pathlib import Path
 
 from solapi import SolapiMessageService
 from solapi.model import Bms, KakaoOption, RequestMessage
@@ -20,14 +20,14 @@ message_service = SolapiMessageService(
 
 try:
     main_file_response = message_service.upload_file(
-        file_path=abspath("../images/example_wide.jpg"),
+        file_path=str(Path(__file__).parent / "../images/example_wide.jpg"),
         upload_type=FileTypeEnum.BMS_WIDE_MAIN_ITEM_LIST,
     )
     main_image_id = main_file_response.file_id
     print(f"메인 이미지 업로드 성공! File ID: {main_image_id}")
 
     sub_file_response = message_service.upload_file(
-        file_path=abspath("../images/example_square.jpg"),
+        file_path=str(Path(__file__).parent / "../images/example_square.jpg"),
         upload_type=FileTypeEnum.BMS_WIDE_SUB_ITEM_LIST,
     )
     sub_image_id = sub_file_response.file_id

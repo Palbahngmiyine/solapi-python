@@ -10,7 +10,7 @@ head 없이 2-6개 아이템, head 포함 시 1-5개 아이템 가능합니다.
 발신번호, 수신번호에 반드시 -, * 등 특수문자를 제거하여 기입하시기 바랍니다. 예) 01012345678
 """
 
-from os.path import abspath
+from pathlib import Path
 
 from solapi import SolapiMessageService
 from solapi.model import Bms, KakaoOption, RequestMessage
@@ -33,7 +33,7 @@ message_service = SolapiMessageService(
 
 try:
     file_response = message_service.upload_file(
-        file_path=abspath("../images/example_wide.jpg"),
+        file_path=str(Path(__file__).parent / "../images/example_wide.jpg"),
         upload_type=FileTypeEnum.BMS_CAROUSEL_COMMERCE_LIST,
     )
     image_id = file_response.file_id
@@ -83,7 +83,7 @@ try:
                             ],
                             coupon=BmsCoupon(
                                 title="10000원 할인 쿠폰",
-                                description="첫 구매 고객 전용 쿠폰입니다.",
+                                description="첫 구매 고객 전용",
                                 link_mobile="https://example.com/coupon",
                             ),
                         ),
